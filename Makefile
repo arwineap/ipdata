@@ -5,8 +5,7 @@
 test: vet lint staticcheck tests
 
 prebuild:
-	go get -u github.com/golang/dep/cmd/dep \
-		golang.org/x/lint/golint \
+	go get -u golang.org/x/lint/golint \
 		honnef.co/go/tools/cmd/staticcheck \
 		golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow
 
