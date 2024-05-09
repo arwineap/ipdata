@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net"
 	"net/http"
 	"net/http/httptest"
@@ -78,7 +77,7 @@ func testBulkHTTPServer() *httptest.Server {
 			return
 		}
 
-		body, err := ioutil.ReadAll(r.Body)
+		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(w, "failed to read body: %v", err)
@@ -452,8 +451,54 @@ func Test_client_Lookup(t *testing.T) {
 				t.Errorf("ip.TimeZone = %#v, want %#v", a, b)
 			}
 
-			if a, b := *ip.Threat, *tt.o.Threat; a != b {
-				t.Errorf("ip.Threat = %#v, want %#v", a, b)
+			if a, b := ip.Threat.IsThreat, tt.o.Threat.IsThreat; a != b {
+				t.Errorf("ip.Threat.IsThreat = %#v, want %#v", a, b)
+			}
+
+			if a, b := ip.Threat.IsBogon, tt.o.Threat.IsBogon; a != b {
+				t.Errorf("ip.Threat.IsBogon = %#v, want %#v", a, b)
+			}
+
+			if a, b := ip.Threat.IsAnonymous, tt.o.Threat.IsAnonymous; a != b {
+				t.Errorf("ip.Threat.IsAnonymous = %#v, want %#v", a, b)
+			}
+
+			if a, b := ip.Threat.IsDatacenter, tt.o.Threat.IsDatacenter; a != b {
+				t.Errorf("ip.Threat.IsDatacenter = %#v, want %#v", a, b)
+			}
+
+			if a, b := ip.Threat.IsProxy, tt.o.Threat.IsProxy; a != b {
+				t.Errorf("ip.Threat.IsProxy = %#v, want %#v", a, b)
+			}
+
+			if a, b := ip.Threat.IsICloudRelay, tt.o.Threat.IsICloudRelay; a != b {
+				t.Errorf("ip.Threat.IsICloudRelay = %#v, want %#v", a, b)
+			}
+
+			if a, b := ip.Threat.IsKnownAbuser, tt.o.Threat.IsKnownAbuser; a != b {
+				t.Errorf("ip.Threat.IsKnownAbuser = %#v, want %#v", a, b)
+			}
+
+			if a, b := ip.Threat.IsKnownAttacker, tt.o.Threat.IsKnownAttacker; a != b {
+				t.Errorf("ip.Threat.IsKnownAttacker = %#v, want %#v", a, b)
+			}
+
+			if a, b := ip.Threat.IsTOR, tt.o.Threat.IsTOR; a != b {
+				t.Errorf("ip.Threat.IsTOR = %#v, want %#v", a, b)
+			}
+
+			if a, b := ip.Threat.IsVPN, tt.o.Threat.IsVPN; a != b {
+				t.Errorf("ip.Threat.IsVPN = %#v, want %#v", a, b)
+			}
+
+			if a, b := ip.Threat.Blocklists, tt.o.Threat.Blocklists; len(a) == len(b) {
+				for i := 0; i < len(a); i++ {
+					if a[i] != b[i] {
+						t.Errorf("ip.Threat.Blocklists[%d] = %#v, want %#v", i, a[i], b[i])
+					}
+				}
+			} else {
+				t.Errorf("len(ip.Threat.Blocklists) = %#v, want %#v", len(a), len(b))
 			}
 		})
 	}
@@ -559,11 +604,11 @@ func Test_client_RawLookup(t *testing.T) {
 			}
 
 			defer func() {
-				_, _ = io.Copy(ioutil.Discard, resp.Body)
+				_, _ = io.Copy(io.Discard, resp.Body)
 				_ = resp.Body.Close()
 			}()
 
-			body, err := ioutil.ReadAll(resp.Body)
+			body, err := io.ReadAll(resp.Body)
 			if err != nil {
 				t.Fatalf("unexpected error reading response body: %s", err)
 			}
@@ -888,8 +933,54 @@ func Test_decodeIP(t *testing.T) {
 				t.Errorf("ip.TimeZone = %#v, want %#v", a, b)
 			}
 
-			if a, b := *ip.Threat, *tt.o.Threat; a != b {
-				t.Errorf("ip.Threat = %#v, want %#v", a, b)
+			if a, b := ip.Threat.IsThreat, tt.o.Threat.IsThreat; a != b {
+				t.Errorf("ip.Threat.IsThreat = %#v, want %#v", a, b)
+			}
+
+			if a, b := ip.Threat.IsBogon, tt.o.Threat.IsBogon; a != b {
+				t.Errorf("ip.Threat.IsBogon = %#v, want %#v", a, b)
+			}
+
+			if a, b := ip.Threat.IsAnonymous, tt.o.Threat.IsAnonymous; a != b {
+				t.Errorf("ip.Threat.IsAnonymous = %#v, want %#v", a, b)
+			}
+
+			if a, b := ip.Threat.IsDatacenter, tt.o.Threat.IsDatacenter; a != b {
+				t.Errorf("ip.Threat.IsDatacenter = %#v, want %#v", a, b)
+			}
+
+			if a, b := ip.Threat.IsProxy, tt.o.Threat.IsProxy; a != b {
+				t.Errorf("ip.Threat.IsProxy = %#v, want %#v", a, b)
+			}
+
+			if a, b := ip.Threat.IsICloudRelay, tt.o.Threat.IsICloudRelay; a != b {
+				t.Errorf("ip.Threat.IsICloudRelay = %#v, want %#v", a, b)
+			}
+
+			if a, b := ip.Threat.IsKnownAbuser, tt.o.Threat.IsKnownAbuser; a != b {
+				t.Errorf("ip.Threat.IsKnownAbuser = %#v, want %#v", a, b)
+			}
+
+			if a, b := ip.Threat.IsKnownAttacker, tt.o.Threat.IsKnownAttacker; a != b {
+				t.Errorf("ip.Threat.IsKnownAttacker = %#v, want %#v", a, b)
+			}
+
+			if a, b := ip.Threat.IsTOR, tt.o.Threat.IsTOR; a != b {
+				t.Errorf("ip.Threat.IsTOR = %#v, want %#v", a, b)
+			}
+
+			if a, b := ip.Threat.IsVPN, tt.o.Threat.IsVPN; a != b {
+				t.Errorf("ip.Threat.IsVPN = %#v, want %#v", a, b)
+			}
+
+			if a, b := ip.Threat.Blocklists, tt.o.Threat.Blocklists; len(a) == len(b) {
+				for i := 0; i < len(a); i++ {
+					if a[i] != b[i] {
+						t.Errorf("ip.Threat.Blocklists[%d] = %#v, want %#v", i, a[i], b[i])
+					}
+				}
+			} else {
+				t.Errorf("len(ip.Threat.Blocklists) = %#v, want %#v", len(a), len(b))
 			}
 		})
 	}
@@ -931,7 +1022,7 @@ func TestClient_RawBulkLookup(t *testing.T) {
 		{
 			name: "bad_host",
 			ips:  []string{"1.1.1.1", "8.8.8.8"},
-			err:  `http request to "http://127.0.0.1:9085/bulk" failed: Post http://127.0.0.1:9085/bulk?api-key=badAPIkey: dial tcp 127.0.0.1:9085: connect: connection refused`,
+			err:  `http request to "http://127.0.0.1:9085/bulk" failed: Post "http://127.0.0.1:9085/bulk?api-key=badAPIkey": dial tcp 127.0.0.1:9085: connect: connection refused`,
 		},
 		{
 			name:      "bad_api_key",
@@ -975,7 +1066,7 @@ func TestClient_RawBulkLookup(t *testing.T) {
 			}
 
 			defer func() {
-				_, _ = io.Copy(ioutil.Discard, got.Body)
+				_, _ = io.Copy(io.Discard, got.Body)
 				_ = got.Body.Close()
 			}()
 
@@ -983,8 +1074,8 @@ func TestClient_RawBulkLookup(t *testing.T) {
 				t.Fatalf("got.StatusCode = %d, want %d", got.StatusCode, tt.wantStatus)
 			}
 
-			body, err := ioutil.ReadAll(got.Body)
-			testErrCheck(t, "ioutil.ReadAll()", "", err)
+			body, err := io.ReadAll(got.Body)
+			testErrCheck(t, "io.ReadAll()", "", err)
 
 			if b := string(body); b != tt.wantBody {
 				t.Fatalf("got.Body = %q, want %q", b, tt.wantBody)

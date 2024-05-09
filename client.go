@@ -10,7 +10,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net"
 	"net/http"
 	"net/url"
@@ -92,7 +91,7 @@ func (c Client) RawLookupWithContext(ctx context.Context, ip string) (*http.Resp
 		return resp, nil
 	default:
 		// provide response body as error to consumer
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to read body from response with status code %q: %s", resp.Status, err)
 		}
@@ -108,7 +107,7 @@ func (c Client) RawLookupWithContext(ctx context.Context, ip string) (*http.Resp
 }
 
 func decodeIP(r io.Reader) (IP, error) {
-	body, err := ioutil.ReadAll(r)
+	body, err := io.ReadAll(r)
 	if err != nil {
 		return IP{}, err
 	}
@@ -137,7 +136,7 @@ func (c Client) LookupWithContext(ctx context.Context, ip string) (IP, error) {
 	}
 
 	defer func() {
-		_, _ = io.Copy(ioutil.Discard, resp.Body)
+		_, _ = io.Copy(io.Discard, resp.Body)
 		_ = resp.Body.Close()
 	}()
 
@@ -179,7 +178,7 @@ func (c *Client) RawBulkLookup(ips []string) (*http.Response, error) {
 }
 
 // RawBulkLookupWithContext is a RawBulkLookup with a provided context.Context.
-	func (c *Client) RawBulkLookupWithContext(ctx context.Context, ips []string) (*http.Response, error) {
+func (c *Client) RawBulkLookupWithContext(ctx context.Context, ips []string) (*http.Response, error) {
 	// build request
 	req, err := newBulkPostRequestWithContext(ctx, c.e+"bulk", c.k, ips)
 	if err != nil {
@@ -198,7 +197,7 @@ func (c *Client) RawBulkLookup(ips []string) (*http.Response, error) {
 		return resp, nil
 	default:
 		// provide response body as error to consumer
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to read body from response with status code %q: %s", resp.Status, err)
 		}
@@ -272,11 +271,11 @@ func (c *Client) BulkLookupWithContext(ctx context.Context, ips []string) ([]*IP
 	}
 
 	defer func() {
-		_, _ = io.Copy(ioutil.Discard, resp.Body)
+		_, _ = io.Copy(io.Discard, resp.Body)
 		_ = resp.Body.Close()
 	}()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to read response body")
 	}
@@ -317,7 +316,6 @@ func newHTTPClient() *http.Client {
 			DialContext: (&net.Dialer{
 				Timeout:   30 * time.Second,
 				KeepAlive: 30 * time.Second,
-				DualStack: true,
 			}).DialContext,
 			MaxIdleConns:          100,
 			IdleConnTimeout:       60 * time.Second,

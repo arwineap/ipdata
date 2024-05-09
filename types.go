@@ -94,32 +94,33 @@ type TimeZone struct {
 // Threat represents the threat object within the JSON response from the API.
 // This provides information about what type of threat this IP may be.
 type Threat struct {
-    IsTOR            bool        `json:"is_tor"`
-    IsVPN            bool        `json:"is_vpn"`
-    IsICloudRelay    bool        `json:"is_icloud_relay"`
-    IsProxy          bool        `json:"is_proxy"`
-    IsDatacenter     bool        `json:"is_datacenter"`
-    IsAnonymous      bool        `json:"is_anonymous"`
-    IsKnownAttacker  bool        `json:"is_known_attacker"`
-    IsKnownAbuser    bool        `json:"is_known_abuser"`
-    IsThreat         bool        `json:"is_threat"`
-    IsBogon          bool        `json:"is_bogon"`
-    Blocklists       []Blocklist `json:"blocklists"`
-    Scores           Scores      `json:"scores"`
+	IsTOR           bool        `json:"is_tor"`
+	IsVPN           bool        `json:"is_vpn"`
+	IsICloudRelay   bool        `json:"is_icloud_relay"`
+	IsProxy         bool        `json:"is_proxy"`
+	IsDatacenter    bool        `json:"is_datacenter"`
+	IsAnonymous     bool        `json:"is_anonymous"`
+	IsKnownAttacker bool        `json:"is_known_attacker"`
+	IsKnownAbuser   bool        `json:"is_known_abuser"`
+	IsThreat        bool        `json:"is_threat"`
+	IsBogon         bool        `json:"is_bogon"`
+	Blocklists      []Blocklist `json:"blocklists"`
+	Scores          Scores      `json:"scores"`
 }
 
+// Blocklist includes details of blocklists that have been attributed to an IP
 type Blocklist struct {
-    Name string `json:"name"`
-    Site string `json:"site"`
-    Type string `json:"type"`
+	Name string `json:"name"`
+	Site string `json:"site"`
+	Type string `json:"type"`
 }
 
-
+// Scores represents scores from IP reputation
 type Scores struct {
-    VPNScore    int `json:"vpn_score"`
-    ProxyScore  int `json:"proxy_score"`
-    ThreatScore int `json:"threat_score"`
-    TrustScore  int `json:"trust_score"`
+	VPNScore    int `json:"vpn_score"`
+	ProxyScore  int `json:"proxy_score"`
+	ThreatScore int `json:"threat_score"`
+	TrustScore  int `json:"trust_score"`
 }
 
 type bulkIP struct {
